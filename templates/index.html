@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job House</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav>
+    <div class="container">
+
+        <div class="logo">
+            Job<span>House</span>
+        </div>
+
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="#">Jobs</a></li>
+            <li><a href="#">Companies</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+
+        <div class="buttons">
+            <a href="/login" class="login-btn">Login</a>
+            <a href="/register" class="register-btn">Register</a>
+        </div>
+
+    </div>
+</nav>
+
+<section class="hero">
+
+    <div class="left">
+
+        <h1>Find Your Dream Job Near You</h1>
+
+        <p>
+            Search thousands of jobs from trusted employers.
+        </p>
+
+        <div class="search">
+
+            <input type="text" placeholder="Job title">
+
+            <input type="text" placeholder="Location">
+
+            <button>Search</button>
+
+        </div>
+
+    </div>
+
+    <div class="right">
+
+    <div class="stats-card">
+
+        <div class="stat-box">
+            <h2>15K+</h2>
+            <p>Active Jobs</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>2800+</h2>
+            <p>Companies</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>50K+</h2>
+            <p>Users</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>94%</h2>
+            <p>Success Rate</p>
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+<section class="categories">
+
+    <div class="heading">
+
+        <h2>Popular Categories</h2>
+
+        <p>Find jobs based on your skills and interests.</p>
+
+    </div>
+
+    <div class="category-container">
+
+        <div class="category-card">
+
+            <div class="category-icon">💻</div>
+
+            <h3>Software Developer</h3>
+
+            <span>2,540 Jobs</span>
+
+        </div>
+
+        <div class="category-card">
+
+            <div class="category-icon">📱</div>
+
+            <h3>Android Developer</h3>
+
+            <span>920 Jobs</span>
+
+        </div>
+
+        <div class="category-card">
+
+            <div class="category-icon">🤖</div>
+
+            <h3>AI / ML Engineer</h3>
+
+            <span>680 Jobs</span>
+
+        </div>
+
+        <div class="category-card">
+
+            <div class="category-icon">📊</div>
+
+            <h3>Data Analyst</h3>
+
+            <span>1,430 Jobs</span>
+
+        </div>
+
+        <div class="category-card">
+
+            <div class="category-icon">🎨</div>
+
+            <h3>UI / UX Designer</h3>
+
+            <span>610 Jobs</span>
+
+        </div>
+
+        <div class="category-card">
+
+            <div class="category-icon">☁️</div>
+
+            <h3>Cloud Engineer</h3>
+
+            <span>780 Jobs</span>
+
+        </div>
+
+    </div>
+
+</section>
+<section class="featured-jobs">
+
+    <div class="heading">
+        <h2>Featured Jobs</h2>
+        <p>Explore the latest job opportunities.</p>
+    </div>
+
+    <div class="job-list">
+
+        <div class="job-card">
+
+            <div class="job-top">
+                <h3>Python Developer</h3>
+                <span class="salary">₹5 – 8 LPA</span>
+            </div>
+
+            <div class="job-details">
+                <span>📍 Pune</span>
+                <span>💼 Full Time</span>
+                <span>🕒 2+ Years</span>
+            </div>
+
+            <button class="apply-btn">Apply Now</button>
+
+        </div>
+
+        <div class="job-card">
+
+            <div class="job-top">
+                <h3>Java Developer</h3>
+                <span class="salary">₹4 – 7 LPA</span>
+            </div>
+
+            <div class="job-details">
+                <span>📍 Bangalore</span>
+                <span>💼 Full Time</span>
+                <span>🕒 Fresher</span>
+            </div>
+
+            <button class="apply-btn">Apply Now</button>
+
+        </div>
+
+        <div class="job-card">
+
+            <div class="job-top">
+                <h3>Data Analyst</h3>
+                <span class="salary">₹6 – 9 LPA</span>
+            </div>
+
+            <div class="job-details">
+                <span>📍 Mumbai</span>
+                <span>💼 Hybrid</span>
+                <span>🕒 1+ Years</span>
+            </div>
+
+            <button class="apply-btn">Apply Now</button>
+
+        </div>
+
+    </div>
+
+</section>
+<section class="why-us">
+
+    <div class="heading">
+        <h2>Why Choose Job House?</h2>
+        <p>Everything you need to find or post jobs in one place.</p>
+    </div>
+
+    <div class="why-container">
+
+        <div class="why-card">
+            <div class="why-icon">🚀</div>
+            <h3>Fast Job Search</h3>
+            <p>Quickly discover jobs based on your skills and preferred location.</p>
+        </div>
+
+        <div class="why-card">
+            <div class="why-icon">🔒</div>
+            <h3>Secure Platform</h3>
+            <p>Your personal information stays protected with secure authentication.</p>
+        </div>
+
+        <div class="why-card">
+            <div class="why-icon">📍</div>
+            <h3>Location Based</h3>
+            <p>Find opportunities near your city using smart location filtering.</p>
+        </div>
+
+        <div class="why-card">
+            <div class="why-icon">📄</div>
+            <h3>Easy Apply</h3>
+            <p>Apply for jobs in just a few clicks using your uploaded resume.</p>
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>
