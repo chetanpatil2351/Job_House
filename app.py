@@ -122,6 +122,58 @@ def dashboard():
         role=session["role"]
     )
 
+# Post Job
 
+@app.route("/post-job", methods=["GET", "POST"])
+def post_job():
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+    if request.method == "POST":
+
+        company_name = request.form["company_name"]
+        job_title = request.form["job_title"]
+        location = request.form["location"]
+        job_type = request.form["job_type"]
+        salary = request.form["salary"]
+        description = request.form["description"]
+
+        conn = get_db()
+
+        conn.execute(
+            """
+            INSERT INTO jobs
+            (
+                company_name,
+                job_title,
+                location,
+                job_type,
+                salary,
+                description,
+                posted_by
+            )
+            VALUES(?,?,?,?,?,?,?)
+            """,
+            (
+                company_name,
+                job_title,
+                location,
+                job_type,
+                salary,
+                description,
+                session["user_id"]
+            )
+        )
+
+        conn.commit()
+        conn.close()
+
+        flash("Job Posted Successfully!", "success")
+
+        return redirect("/post-job")
+
+    return render_template("post_job.html")
 if __name__ == "__main__":
     app.run(debug=True)

@@ -12,6 +12,7 @@ def create_tables():
 
     conn = get_db()
 
+    # Users Table
     conn.execute("""
     CREATE TABLE IF NOT EXISTS users(
 
@@ -30,6 +31,33 @@ def create_tables():
         city TEXT,
 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+    )
+    """)
+
+    # Jobs Table
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS jobs(
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        company_name TEXT NOT NULL,
+
+        job_title TEXT NOT NULL,
+
+        location TEXT NOT NULL,
+
+        job_type TEXT NOT NULL,
+
+        salary TEXT NOT NULL,
+
+        description TEXT NOT NULL,
+
+        posted_by INTEGER,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY(posted_by) REFERENCES users(id)
 
     )
     """)

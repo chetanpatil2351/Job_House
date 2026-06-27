@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Post Job | Job House</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+
+</head>
+
+<body>
+
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+    <div class="register-card">
+
+        <h2 class="text-center mb-4">
+
+            Post New Job
+
+        </h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+
+            <div class="alert alert-{{ category }} alert-dismissible fade show">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+        <form method="POST">
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="company_name"
+                    placeholder="Company Name"
+                    required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="job_title"
+                    placeholder="Job Title"
+                    required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="location"
+                    placeholder="Location"
+                    required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <select
+                    class="form-select"
+                    name="job_type"
+                    required>
+
+                    <option value="">Select Job Type</option>
+
+                    <option>Full Time</option>
+
+                    <option>Part Time</option>
+
+                    <option>Internship</option>
+
+                    <option>Remote</option>
+
+                    <option>Hybrid</option>
+
+                    <option>Contract</option>
+
+                </select>
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="salary"
+                    placeholder="Salary (Example: ₹5-8 LPA)"
+                    required>
+
+            </div>
+
+            <div class="mb-4">
+
+                <textarea
+                    class="form-control"
+                    rows="5"
+                    name="description"
+                    placeholder="Job Description"
+                    required></textarea>
+
+            </div>
+
+            <button class="btn btn-primary w-100">
+
+                Post Job
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+setTimeout(function(){
+
+    let alerts = document.querySelectorAll(".alert");
+
+    alerts.forEach(function(alert){
+
+        alert.classList.remove("show");
+
+        alert.classList.add("fade");
+
+        setTimeout(function(){
+
+            alert.remove();
+
+        },500);
+
+    });
+
+},3000);
+</script>
+</body>
+
+</html>
