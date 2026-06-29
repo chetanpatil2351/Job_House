@@ -799,3 +799,16 @@ transition:.3s;
 background:#2563eb;
 
 }
+.action-card{
+
+    text-decoration:none;
+
+    color:white;
+
+}
+
+.action-card:hover{
+
+    color:white;
+
+}

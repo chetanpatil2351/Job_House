@@ -13,13 +13,9 @@ body{
 
     background:#07111f;
 
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
     min-height:100vh;
+
+    padding:30px 0;
 
 }
 
@@ -62,9 +58,10 @@ body{
 /* ===========================
    INPUTS
 =========================== */
-
 .form-control,
 .form-select{
+
+    width:100%;
 
     height:58px;
 
@@ -355,5 +352,150 @@ label{
         min-height:140px;
 
     }
+
+}
+/* ==========================
+   Dashboard Button
+========================== */
+
+.page-header{
+
+    position:fixed;
+
+    top:25px;
+
+    left:25px;
+
+    z-index:1000;
+
+}
+
+.dashboard-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px 22px;
+
+    background:#4F8CFF;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+    box-shadow:0 8px 20px rgba(79,140,255,.30);
+
+}
+
+.dashboard-btn:hover{
+
+    background:#2563eb;
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+}
+
+.dashboard-btn i{
+
+    font-size:18px;
+
+}
+/* ==========================
+   FORM WRAPPER
+========================== */
+
+.register-wrapper{
+
+    width:100%;
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px 20px;
+
+}
+.upload-btn{
+    display:inline-block;
+    margin:auto;
+    background:#4F8CFF;
+    color:#fff;
+    padding:12px 25px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+    margin-bottom:20px;
+}
+
+.upload-btn:hover{
+    background:#2f6df6;
+}
+.alert{
+
+    padding:15px 20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    text-align:center;
+    font-weight:600;
+    font-size:16px;
+
+}
+
+.alert-success{
+
+    background:#16a34a;   /* Green Background */
+    color:white;
+    border:1px solid #15803d;
+
+}
+
+.alert-danger{
+
+    background:#dc2626;   /* Red Background */
+    color:white;
+    border:1px solid #b91c1c;
+
+}
+
+.alert-warning{
+
+    background:#f59e0b;   /* Yellow Background */
+    color:white;
+    border:1px solid #d97706;
+
+}
+.top-alert{
+
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    min-width:350px;
+    max-width:500px;
+    padding:15px 20px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:600;
+    color:white;
+    z-index:9999;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
 
 }

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | Job House</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/auth.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</head>
+
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+    {% for category, message in messages %}
+
+    <div class="top-alert alert-{{ category }}">
+
+        {{ message }}
+
+    </div>
+
+    {% endfor %}
+
+{% endif %}
+{% endwith %}
+
+<div class="page-header">
+
+    <a href="/dashboard" class="dashboard-btn">
+
+        <i class="bi bi-arrow-left"></i>
+
+        Dashboard
+
+    </a>
+
+</div>
+
+<div class="register-wrapper">
+
+    <div class="register-card">
+
+        <h2>My Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+ <div style="text-align:center; margin:30px 0;">
+
+    {% if user["photo"] %}
+
+    <img
+        src="{{ url_for('static', filename='uploads/photos/' + user['photo']) }}"
+        alt="Profile Photo"
+        style="
+            width:160px;
+            height:160px;
+            border-radius:50%;
+            object-fit:cover;
+            border:5px solid #4F8CFF;
+            box-shadow:0 10px 25px rgba(0,0,0,.25);
+        ">
+
+    {% else %}
+
+    <img
+        src="{{ url_for('static', filename='images/default-profile.png') }}"
+        alt="Profile Photo"
+        style="
+            width:160px;
+            height:160px;
+            border-radius:50%;
+            object-fit:cover;
+            border:5px solid #4F8CFF;
+            box-shadow:0 10px 25px rgba(0,0,0,.25);
+        ">
+
+    {% endif %}
+
+</div>
+   
+<div style="text-align:center; margin-top:20px; margin-bottom:20px;">
+    <label class="upload-btn">
+
+        <i class="bi bi-camera-fill"></i>
+
+        Change Photo
+
+        <input type="file"
+               name="photo"
+               accept=".jpg,.jpeg,.png"
+               hidden>
+              
+
+    </label>
+    <div style="
+    background:#1b2d4d;
+    padding:20px;
+    border-radius:15px;
+    margin:25px 0;
+    text-align:center;
+">
+
+    <h3 style="color:#fff; margin-bottom:15px;">
+        ATS Resume Score
+    </h3>
+
+    <h1 style="
+        color:#4F8CFF;
+        font-size:48px;
+        margin-bottom:15px;
+    ">
+        {{ ats_score }}%
+    </h1>
+
+    <div style="
+        width:100%;
+        height:18px;
+        background:#2b3f63;
+        border-radius:50px;
+        overflow:hidden;
+    ">
+
+        <div style="
+            width:{{ ats_score }}%;
+            height:100%;
+            background:#22c55e;
+            transition:0.5s;
+        "></div>
+
+    </div>
+    <div style="
+    margin-top:25px;
+    background:#162742;
+    border-radius:12px;
+    padding:18px;
+">
+
+    <h4 style="margin-bottom:15px;">
+        ✔ Skills Found
+    </h4>
+
+    {% for skill in found_keywords %}
+
+        <span style="
+            display:inline-block;
+            background:#22c55e;
+            color:white;
+            padding:7px 12px;
+            margin:5px;
+            border-radius:20px;
+            font-size:14px;
+        ">
+            {{ skill|title }}
+        </span>
+
+    {% endfor %}
+
+</div>
+
+    <p style="
+        margin-top:15px;
+        color:#d7e4ff;
+    ">
+
+        {% if ats_score >= 80 %}
+            Excellent Resume 🚀
+
+        {% elif ats_score >= 60 %}
+            Good Resume 👍
+
+        {% elif ats_score >= 40 %}
+            Needs Improvement 📄
+
+        {% else %}
+            Poor Resume ❌
+        {% endif %}
+
+    </p>
+
+</div>
+</div>
+            <div class="mb-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    value="{{ user['full_name'] }}"
+                    readonly>
+            </div>
+    
+
+            <div class="mb-3">
+
+                <input
+                    type="email"
+                    class="form-control"
+                    value="{{ user['email'] }}"
+                    readonly>
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="phone"
+                    placeholder="Phone Number"
+                    value="{{ user['phone'] or '' }}">
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="city"
+                    placeholder="City"
+                    value="{{ user['city'] or '' }}">
+
+            </div>
+
+            <div class="mb-3">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    value="{{ user['role'] }}"
+                    readonly>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label style="margin-bottom:8px;">
+                    Upload Resume (PDF)
+                </label>
+
+                <input
+                    type="file"
+                    class="form-control"
+                    name="resume"
+                    accept=".pdf">
+
+            </div>
+
+            {% if user["resume"] %}
+
+            <div style="margin-bottom:20px;">
+
+                <a href="/static/uploads/resumes/{{ user['resume'] }}"
+                   target="_blank"
+                   class="apply-btn">
+
+                    <i class="bi bi-file-earmark-pdf"></i>
+
+                    View Resume
+
+                </a>
+
+            </div>
+
+            {% endif %}
+
+            <button
+                class="btn btn-primary w-100">
+
+                Save Changes
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+setTimeout(function(){
+
+let alerts = document.querySelectorAll(".top-alert");
+    alerts.forEach(function(alert){
+
+        alert.style.transition = "all 0.5s ease";
+        alert.style.opacity = "0";
+
+        setTimeout(function(){
+
+            alert.remove();
+
+        },500);
+
+    });
+
+},3000);
+
+</script>
+
+</body>
+
+</html>

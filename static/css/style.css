@@ -942,3 +942,121 @@ text-align:center;
 }
 
 }
+/* ==========================
+   Dashboard Button
+========================== */
+
+.page-header{
+
+    width:90%;
+    max-width:1200px;
+    margin:25px auto 0;
+
+}
+
+.dashboard-btn{
+
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+
+    background:#4F8CFF;
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:12px;
+
+    font-size:16px;
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.dashboard-btn:hover{
+
+    background:#2563eb;
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 25px rgba(79,140,255,.35);
+
+}
+
+.dashboard-btn i{
+
+    font-size:18px;
+
+}
+.job-actions{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:20px;
+
+}
+
+.edit-btn,
+.delete-btn{
+
+    flex:1;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    color:#fff;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.edit-btn{
+
+    background:#4F8CFF;
+
+}
+
+.edit-btn:hover{
+
+    background:#2563eb;
+
+    color:#fff;
+
+}
+
+.delete-btn{
+
+    background:#dc3545;
+
+}
+
+.delete-btn:hover{
+
+    background:#b02a37;
+
+    color:#fff;
+
+}
+.applied-badge{
+    display:inline-block;
+    background:#28a745;
+    color:#fff;
+    padding:10px 20px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:15px;
+}

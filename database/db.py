@@ -17,6 +17,8 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS users(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        
+        photo TEXT,
 
         full_name TEXT NOT NULL,
 
@@ -29,6 +31,8 @@ def create_tables():
         phone TEXT,
 
         city TEXT,
+        
+        resume TEXT,
 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
@@ -58,6 +62,23 @@ def create_tables():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY(posted_by) REFERENCES users(id)
+
+    )
+    """)
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS applications(
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        user_id INTEGER NOT NULL,
+
+        job_id INTEGER NOT NULL,
+
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY(user_id) REFERENCES users(id),
+
+        FOREIGN KEY(job_id) REFERENCES jobs(id)
 
     )
     """)

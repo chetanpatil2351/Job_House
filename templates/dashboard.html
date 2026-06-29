@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    
 
 <div class="dashboard">
 
@@ -28,32 +29,48 @@
 
         <ul class="menu">
 
-            <li class="active">
-                <i class="bi bi-grid-fill"></i>
-                Dashboard
-            </li>
+    <li class="active">
+        <i class="bi bi-grid-fill"></i>
+        Dashboard
+    </li>
 
-            <li>
-                <i class="bi bi-search"></i>
-                Find Jobs
-            </li>
+    {% if role == "Employer" %}
 
-            <li>
-                <i class="bi bi-file-earmark-text"></i>
-                Applied Jobs
-            </li>
+    <li onclick="location.href='/post-job'">
+        <i class="bi bi-plus-circle"></i>
+        Post Job
+    </li>
 
-            <li>
-                <i class="bi bi-bookmark"></i>
-                Saved Jobs
-            </li>
+    <li onclick="location.href='/my-jobs'">
+        <i class="bi bi-briefcase"></i>
+        My Jobs
+    </li>
 
-            <li>
-                <i class="bi bi-person"></i>
-                My Profile
-            </li>
+    <li onclick="location.href='/applicants'">
+        <i class="bi bi-people"></i>
+        Applicants
+    </li>
 
-        </ul>
+    {% else %}
+
+    <li onclick="location.href='/find-jobs'">
+        <i class="bi bi-search"></i>
+        Find Jobs
+    </li>
+
+    <li onclick="location.href='/applied-jobs'">
+        <i class="bi bi-file-earmark-text"></i>
+        Applied Jobs
+    </li>
+
+    <li onclick="location.href='/profile'">
+        <i class="bi bi-person"></i>
+        My Profile
+    </li>
+
+    {% endif %}
+
+</ul>
 
         <a href="/logout" class="logout">
 
@@ -152,77 +169,112 @@
 
     <div class="action-grid">
 
-        <div class="action-card">
+        {% if role == "Employer" %}
+
+        <a href="/post-job" class="action-card">
 
             <div class="action-icon blue">
-
-                <i class="bi bi-search"></i>
-
+                <i class="bi bi-plus-circle"></i>
             </div>
 
             <div class="action-content">
-
-                <h3>Find Jobs</h3>
-
-                <p>Search and apply for jobs that match your skills.</p>
-
+                <h3>Post Job</h3>
+                <p>Create a new job posting.</p>
             </div>
 
             <div class="arrow">
-
                 <i class="bi bi-arrow-right"></i>
-
             </div>
 
-        </div>
+        </a>
 
-        <div class="action-card">
+       <a href="/my-jobs" class="action-card">
+
+    <div class="action-icon purple">
+        <i class="bi bi-briefcase"></i>
+    </div>
+
+    <div class="action-content">
+        <h3>My Jobs</h3>
+        <p>Manage your posted jobs.</p>
+    </div>
+
+    <div class="arrow">
+        <i class="bi bi-arrow-right"></i>
+    </div>
+
+</a>
+    <a href="/applicants" class="action-card">
+            <div class="action-icon green">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <div class="action-content">
+                <h3>Applicants</h3>
+                <p>View job applications.</p>
+            </div>
+
+            <div class="arrow">
+                <i class="bi bi-arrow-right"></i>
+            </div>
+
+        </a>
+
+        {% else %}
+
+        <a href="/find-jobs" class="action-card">
+
+            <div class="action-icon blue">
+                <i class="bi bi-search"></i>
+            </div>
+
+            <div class="action-content">
+                <h3>Find Jobs</h3>
+                <p>Search and apply for jobs.</p>
+            </div>
+
+            <div class="arrow">
+                <i class="bi bi-arrow-right"></i>
+            </div>
+
+        </a>
+
+        <a href="/applied-jobs" class="action-card">
 
             <div class="action-icon purple">
-
                 <i class="bi bi-file-earmark-text"></i>
-
             </div>
 
             <div class="action-content">
-
                 <h3>Applied Jobs</h3>
-
-                <p>Track your job applications and responses.</p>
-
+                <p>Track your applications.</p>
             </div>
 
             <div class="arrow">
-
                 <i class="bi bi-arrow-right"></i>
-
             </div>
 
-        </div>
+        </a>
 
-        <div class="action-card">
+        <a href="/profile" class="action-card">
 
             <div class="action-icon green">
-
                 <i class="bi bi-person"></i>
-
             </div>
 
             <div class="action-content">
-
                 <h3>My Profile</h3>
-
-                <p>Update your profile and personal information.</p>
-
+                <p>Manage your profile.</p>
             </div>
 
             <div class="arrow">
-
                 <i class="bi bi-arrow-right"></i>
-
             </div>
 
-        </div>
+        </a>
+        
+
+        {% endif %}
 
     </div>
 
