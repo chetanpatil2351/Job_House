@@ -31,6 +31,9 @@ app.config["PHOTO_FOLDER"] = PHOTO_FOLDER
 # Create database tables
 create_tables()
 
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+os.makedirs(app.config["PHOTO_FOLDER"], exist_ok=True)
+
 def calculate_ats_score(resume_path):
     
     score = 0
