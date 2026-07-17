@@ -63,6 +63,11 @@
         Applied Jobs
     </li>
 
+    <li onclick="location.href='/saved-jobs'">
+        <i class="bi bi-bookmark-fill"></i>
+        Saved Jobs
+    </li>
+
     <li onclick="location.href='/profile'">
         <i class="bi bi-person"></i>
         My Profile
@@ -72,12 +77,8 @@
 
 </ul>
 
-        <a href="/logout" class="logout">
-
-            <i class="bi bi-box-arrow-right"></i>
-
-            Logout
-
+        <a href="/logout" class="btn btn-danger">
+    Logout
         </a>
 
     </aside>
@@ -98,7 +99,7 @@
 
                     <i class="bi bi-bell"></i>
 
-                    <span>3</span>
+                    <span>0</span>
 
                 </div>
 
@@ -255,6 +256,23 @@
             </div>
 
         </a>
+        
+        <a href="/saved-jobs" class="action-card">
+
+        <div class="action-icon orange">
+            <i class="bi bi-bookmark-fill"></i>
+        </div>
+
+        <div class="action-content">
+            <h3>Saved Jobs</h3>
+            <p>View your saved jobs.</p>
+        </div>
+
+        <div class="arrow">
+            <i class="bi bi-arrow-right"></i>
+        </div>
+
+    </a>
 
         <a href="/profile" class="action-card">
 
@@ -287,6 +305,38 @@
 
     <div class="overview-grid">
 
+        {% if role == "Employer" %}
+
+        <div class="overview-card">
+
+            <div class="overview-icon blue">
+                <i class="bi bi-briefcase"></i>
+            </div>
+
+            <div>
+                <span>Jobs Posted</span>
+                <h3>{{ jobs_posted }}</h3>
+                <p>Total Jobs</p>
+            </div>
+
+        </div>
+
+        <div class="overview-card">
+
+            <div class="overview-icon green">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <div>
+                <span>Applicants</span>
+                <h3>{{ applicants }}</h3>
+                <p>Total Applications</p>
+            </div>
+
+        </div>
+
+        {% else %}
+
         <div class="overview-card">
 
             <div class="overview-icon blue">
@@ -295,8 +345,8 @@
 
             <div>
                 <span>Jobs Applied</span>
-                <h3>0</h3>
-                <p>Keep applying!</p>
+                <h3>{{ jobs_applied }}</h3>
+                <p>Applications Submitted</p>
             </div>
 
         </div>
@@ -309,22 +359,24 @@
 
             <div>
                 <span>Saved Jobs</span>
-                <h3>0</h3>
-                <p>Jobs you saved</p>
+                <h3>{{ saved_jobs }}</h3>
+                <p>Total Saved Jobs</p>
             </div>
 
         </div>
 
+        {% endif %}
+
         <div class="overview-card">
 
             <div class="overview-icon green">
-                <i class="bi bi-eye"></i>
+                <i class="bi bi-person"></i>
             </div>
 
             <div>
-                <span>Profile Views</span>
-                <h3>0</h3>
-                <p>Total profile views</p>
+                <span>Profile</span>
+                <h3>100%</h3>
+                <p>Completed</p>
             </div>
 
         </div>
@@ -337,8 +389,8 @@
 
             <div>
                 <span>Notifications</span>
-                <h3>3</h3>
-                <p>Unread notifications</p>
+                <h3>0</h3>
+                <p>No New Alerts</p>
             </div>
 
         </div>
@@ -346,6 +398,8 @@
     </div>
 
 </section>
+
+
 <!-- Bottom Section -->
 
 <section class="bottom-section">
@@ -418,11 +472,11 @@
 
         </p>
 
-        <button>
+       <a href="/profile" class="apply-btn">
 
-            Upload Resume
+        Update Profile
 
-        </button>
+        </a>
 
     </div>
 

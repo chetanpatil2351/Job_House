@@ -499,3 +499,58 @@ label{
     box-shadow:0 10px 25px rgba(0,0,0,.25);
 
 }
+/* Global Alert */
+
+#flash-container{
+
+    position:fixed;
+
+    top:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    z-index:9999;
+
+    width:420px;
+
+}
+
+.flash-alert{
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.5s;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+
+}
+
+.flash-success{
+
+    background:#16a34a;
+
+}
+
+.flash-danger{
+
+    background:#dc2626;
+
+}
+
+.flash-warning{
+
+    background:#f59e0b;
+
+}

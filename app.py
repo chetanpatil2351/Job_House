@@ -6,6 +6,17 @@ import re
 import os
 from werkzeug.utils import secure_filename
 
+ALLOWED_RESUME_EXTENSIONS = {"pdf"}
+ALLOWED_PHOTO_EXTENSIONS = {"jpg", "jpeg", "png"}
+
+
+def allowed_file(filename, allowed_extensions):
+
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in allowed_extensions
+    )
+
 app = Flask(__name__)
 app.secret_key = "jobhouse_secret_key"
 
@@ -462,13 +473,106 @@ def register():
 def dashboard():
 
     if "user_id" not in session:
-
         return redirect("/login")
 
+    conn = get_db()
+    
+    profile_completion = 100
+
+    if session["role"] == "Job Seeker":
+
+                user = conn.execute(
+                    """
+                    SELECT *
+                    FROM users
+                    WHERE id=?
+                    """,
+                    (session["user_id"],)
+                ).fetchone()
+
+                completed = 0
+                total = 6
+
+                if user["full_name"]:
+                    completed += 1
+
+                if user["email"]:
+                    completed += 1
+
+                if user["phone"]:
+                    completed += 1
+
+                if user["city"]:
+                    completed += 1
+
+                if user["resume"]:
+                    completed += 1
+
+                if user["photo"]:
+                    completed += 1
+
+                profile_completion = int((completed / total) * 100)
+
+    jobs_posted = 0
+    applicants = 0
+    jobs_applied = 0
+    saved_jobs = 0
+
+    if session["role"] == "Employer":
+
+            jobs_posted = conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM jobs
+                WHERE posted_by=?
+                """,
+                (session["user_id"],)
+            ).fetchone()[0]
+
+            applicants = conn.execute(
+                """
+                SELECT COUNT(*)
+
+                FROM applications
+
+                JOIN jobs
+                ON applications.job_id = jobs.id
+
+                WHERE jobs.posted_by=?
+                """,
+                (session["user_id"],)
+            ).fetchone()[0]
+
+    else:
+
+            jobs_applied = conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM applications
+                WHERE user_id=?
+                """,
+                (session["user_id"],)
+            ).fetchone()[0]
+            
+            saved_jobs = conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM saved_jobs
+                WHERE user_id=?
+                """,
+                (session["user_id"],)
+            ).fetchone()[0]
+
+    conn.close()
+        
     return render_template(
         "dashboard.html",
         name=session["full_name"],
-        role=session["role"]
+        role=session["role"],
+        jobs_posted=jobs_posted,
+        applicants=applicants,
+        jobs_applied=jobs_applied,
+        saved_jobs=saved_jobs
     )
 
 # Post Job
@@ -491,6 +595,7 @@ def post_job():
             job_type = request.form["job_type"]
             salary = request.form["salary"]
             description = request.form["description"]
+            skills = request.form["skills"]
 
             conn = get_db()
 
@@ -504,9 +609,10 @@ def post_job():
                     job_type,
                     salary,
                     description,
+                    skills,
                     posted_by
                 )
-                VALUES(?,?,?,?,?,?,?)
+                VALUES(?,?,?,?,?,?,?,?)
                 """,
                 (
                     company_name,
@@ -515,6 +621,7 @@ def post_job():
                     job_type,
                     salary,
                     description,
+                    skills,
                     session["user_id"]
                 )
             )
@@ -527,43 +634,132 @@ def post_job():
             return redirect("/post-job")
 
     return render_template("post_job.html")
+
+
 # Find Jobs
 
 @app.route("/find-jobs")
 def find_jobs():
 
     if "user_id" not in session:
-
         return redirect("/login")
+
     if session["role"] != "Job Seeker":
         flash("Access Denied!", "danger")
         return redirect("/dashboard")
 
     conn = get_db()
 
-    jobs = conn.execute("""
-SELECT
-    jobs.*,
-    applications.id AS applied
+    # User Resume Skills
+    user = conn.execute(
+        """
+        SELECT resume_skills
+        FROM users
+        WHERE id=?
+        """,
+        (session["user_id"],)
+    ).fetchone()
 
-FROM jobs
+    # Search & Filters
+    search = request.args.get("search", "")
+    location = request.args.get("location", "")
+    job_type = request.args.get("job_type", "")
 
-LEFT JOIN applications
-ON jobs.id = applications.job_id
-AND applications.user_id = ?
+    # Fetch Jobs
+    jobs = conn.execute(
+        """
+        SELECT
+            jobs.*,
+            applications.id AS applied,
+            saved_jobs.id AS saved
 
-ORDER BY jobs.created_at DESC
-""", (session["user_id"],)).fetchall()
+        FROM jobs
+
+        LEFT JOIN applications
+        ON jobs.id = applications.job_id
+        AND applications.user_id = ?
+
+        LEFT JOIN saved_jobs
+        ON jobs.id = saved_jobs.job_id
+        AND saved_jobs.user_id = ?
+
+        WHERE
+        (
+            jobs.job_title LIKE ?
+            OR jobs.company_name LIKE ?
+            OR jobs.skills LIKE ?
+        )
+
+        AND jobs.location LIKE ?
+
+        AND jobs.job_type LIKE ?
+
+        ORDER BY jobs.created_at DESC
+        """,
+        (
+            session["user_id"],   # applications
+            session["user_id"],   # saved_jobs
+            f"%{search}%",
+            f"%{search}%",
+            f"%{search}%",
+            f"%{location}%",
+            f"%{job_type}%"
+        )
+    ).fetchall()
+
+    jobs_with_match = []
+
+    user_skills = set()
+
+    if user["resume_skills"]:
+
+        user_skills = {
+            skill.strip().lower()
+            for skill in user["resume_skills"].split(",")
+        }
+
+    for job in jobs:
+
+        match = 0
+        matched = []
+        missing = []
+
+        if job["skills"]:
+
+            job_skills = {
+                skill.strip().lower()
+                for skill in job["skills"].split(",")
+            }
+
+            common = user_skills.intersection(job_skills)
+
+            matched = sorted(list(common))
+            missing = sorted(list(job_skills - common))
+
+            if len(job_skills) > 0:
+                match = int((len(common) / len(job_skills)) * 100)
+
+        job = dict(job)
+
+        job["match"] = match
+        job["matched"] = matched
+        job["missing"] = missing
+
+        jobs_with_match.append(job)
+
+    # Highest Match First
+    jobs_with_match.sort(
+        key=lambda x: x["match"],
+        reverse=True
+    )
 
     conn.close()
 
     return render_template(
-
         "find_jobs.html",
-
-        jobs=jobs
-
+        jobs=jobs_with_match
     )
+    
    # Apply Job
 
 @app.route("/apply-job/<int:job_id>")
@@ -618,6 +814,101 @@ def apply_job(job_id):
     flash("Application Submitted Successfully!", "success")
 
     return redirect("/find-jobs")
+
+@app.route("/save-job/<int:job_id>")
+def save_job(job_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if session["role"] != "Job Seeker":
+        flash("Access Denied!", "danger")
+        return redirect("/dashboard")
+
+    conn = get_db()
+
+    conn.execute(
+        """
+        INSERT OR IGNORE INTO saved_jobs
+        (user_id, job_id)
+        VALUES(?,?)
+        """,
+        (
+            session["user_id"],
+            job_id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    flash("Job Saved Successfully!", "success")
+
+    return redirect("/find-jobs")
+
+# Saved Jobs
+
+@app.route("/saved-jobs")
+def saved_jobs():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if session["role"] != "Job Seeker":
+        flash("Access Denied!", "danger")
+        return redirect("/dashboard")
+
+    conn = get_db()
+
+    jobs = conn.execute(
+        """
+        SELECT jobs.*
+
+        FROM saved_jobs
+
+        JOIN jobs
+        ON saved_jobs.job_id = jobs.id
+
+        WHERE saved_jobs.user_id=?
+
+        ORDER BY saved_jobs.id DESC
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "saved_jobs.html",
+        jobs=jobs
+    )
+
+@app.route("/remove-saved-job/<int:job_id>")
+def remove_saved_job(job_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db()
+
+    conn.execute(
+        """
+        DELETE FROM saved_jobs
+        WHERE user_id=? AND job_id=?
+        """,
+        (
+            session["user_id"],
+            job_id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    flash("Job removed from saved jobs!", "success")
+
+    return redirect("/saved-jobs")
+
     # Applicants
 
 @app.route("/applicants")
@@ -634,13 +925,21 @@ def applicants():
 
     applicants = conn.execute("""
 
-        SELECT
+       SELECT
 
-            users.full_name,
-            users.email,
-            jobs.job_title,
-            applications.applied_at
+        applications.id,
 
+        users.full_name,
+
+        users.email,
+
+        users.resume,
+
+        jobs.job_title,
+
+        applications.status,
+
+        applications.applied_at
         FROM applications
 
         JOIN users
@@ -649,7 +948,7 @@ def applicants():
         JOIN jobs
         ON applications.job_id = jobs.id
 
-        WHERE jobs.posted_by = ?
+        WHERE jobs.posted_by=?
 
         ORDER BY applications.applied_at DESC
 
@@ -679,11 +978,12 @@ def applied_jobs():
 
     jobs = conn.execute("""
         SELECT
-            jobs.job_title,
-            jobs.company_name,
-            jobs.location,
-            jobs.salary,
-            applications.applied_at
+        jobs.job_title,
+        jobs.company_name,
+        jobs.location,
+        jobs.salary,
+        applications.status,
+        applications.applied_at
 
         FROM applications
 
@@ -736,6 +1036,17 @@ def profile():
 
         # Resume Upload
         if resume and resume.filename != "":
+    
+            if not allowed_file(
+                resume.filename,
+                ALLOWED_RESUME_EXTENSIONS
+            ):
+
+                flash("Only PDF resumes are allowed!", "danger")
+
+                conn.close()
+
+                return redirect("/profile")
 
             resume_name = secure_filename(resume.filename)
 
@@ -745,9 +1056,22 @@ def profile():
                     resume_name
                 )
             )
-
         # Photo Upload
         if photo and photo.filename != "":
+    
+            if not allowed_file(
+                photo.filename,
+                ALLOWED_PHOTO_EXTENSIONS
+            ):
+
+                flash(
+                    "Only JPG, JPEG and PNG images are allowed!",
+                    "danger"
+                )
+
+                conn.close()
+
+                return redirect("/profile")
 
             photo_name = secure_filename(photo.filename)
 
@@ -806,6 +1130,24 @@ def profile():
         )
 
         ats_score, found_keywords = calculate_ats_score(resume_path)
+        resume_skills = ",".join(found_keywords)
+
+        conn = get_db()
+
+        conn.execute(
+            """
+            UPDATE users
+            SET resume_skills=?
+            WHERE id=?
+            """,
+            (
+                resume_skills,
+                session["user_id"]
+            )
+        )
+
+        conn.commit()
+        conn.close()
 
 
     return render_template(
@@ -886,29 +1228,29 @@ def edit_job(job_id):
         location = request.form["location"]
         job_type = request.form["job_type"]
         salary = request.form["salary"]
+        skills = request.form["skills"]
         description = request.form["description"]
 
         conn.execute(
             """
             UPDATE jobs
-
             SET
-
             company_name=?,
             job_title=?,
             location=?,
             job_type=?,
             salary=?,
+            skills=?,
             description=?
-
             WHERE id=?
             """,
-            (
+           (
                 company_name,
                 job_title,
                 location,
                 job_type,
                 salary,
+                skills,
                 description,
                 job_id
             )
@@ -944,6 +1286,22 @@ def delete_job(job_id):
 
     conn.execute(
         """
+        DELETE FROM applications
+        WHERE job_id=?
+        """,
+        (job_id,)
+    )
+
+    conn.execute(
+        """
+        DELETE FROM saved_jobs
+        WHERE job_id=?
+        """,
+        (job_id,)
+    )
+
+    conn.execute(
+        """
         DELETE FROM jobs
         WHERE id=? AND posted_by=?
         """,
@@ -952,12 +1310,68 @@ def delete_job(job_id):
             session["user_id"]
         )
     )
-
     conn.commit()
     conn.close()
 
     flash("Job Deleted Successfully!", "success")
 
     return redirect("/my-jobs")
+
+
+@app.route("/update-status/<int:application_id>", methods=["POST"])
+def update_status(application_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if session["role"] != "Employer":
+        flash("Access Denied!", "danger")
+        return redirect("/dashboard")
+
+    status = request.form["status"]
+
+    conn = get_db()
+
+    conn.execute(
+    """
+    UPDATE applications
+    SET status=?
+
+    WHERE id=?
+
+    AND job_id IN (
+
+        SELECT id
+
+        FROM jobs
+
+        WHERE posted_by=?
+
+    )
+    """,
+    (
+        status,
+        application_id,
+        session["user_id"]
+    )
+)
+       
+
+    conn.commit()
+    conn.close()
+
+    flash("Application status updated successfully!", "success")
+
+    return redirect("/applicants")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    flash("Logged out successfully!", "success")
+
+    return redirect("/login")
+
 if __name__ == "__main__":
     app.run(debug=True)

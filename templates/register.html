@@ -22,29 +22,7 @@
 <div class="container vh-100 d-flex justify-content-center align-items-center">
 
      <div class="register-card">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-
-    {% if messages %}
-
-        {% for category, message in messages %}
-
-            <div class="alert alert-{{ category }} alert-dismissible fade show">
-
-                {{ message }}
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-                </button>
-
-            </div>
-
-        {% endfor %}
-
-    {% endif %}
-
-{% endwith %}
+     {% include "alert.html" %}
 
         <h2 class="text-center mb-4">
 

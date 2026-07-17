@@ -37,7 +37,7 @@
 
         <h2>Applied Jobs</h2>
 
-        <p>Jobs you have applied for.</p>
+        <p>Track all your job applications.</p>
 
     </div>
 
@@ -45,33 +45,77 @@
 
         {% for job in jobs %}
 
-<div class="job-card">
+        <div class="job-card">
+
             <div class="job-top">
 
                 <h3>{{ job["job_title"] }}</h3>
 
-                <span class="salary">{{ job["salary"] }}</span>
+                <span class="salary">
+
+                    {{ job["salary"] }}
+
+                </span>
 
             </div>
 
             <div class="job-details">
 
                 <span>
+
                     <i class="bi bi-building"></i>
+
                     {{ job["company_name"] }}
+
                 </span>
 
                 <span>
+
                     <i class="bi bi-geo-alt"></i>
+
                     {{ job["location"] }}
+
                 </span>
 
             </div>
 
-            <p style="margin-top:15px; color:#9fb0ca;">
+            <p style="margin-top:15px;color:#9fb0ca;">
 
                 Applied On :
+
                 {{ job["applied_at"] }}
+
+            </p>
+
+            <p style="margin-top:15px;">
+
+                <strong>Application Status :</strong>
+
+                {% if job["status"] == "Pending" %}
+
+                    <span class="status pending">
+
+                        Pending
+
+                    </span>
+
+                {% elif job["status"] == "Shortlisted" %}
+
+                    <span class="status shortlisted">
+
+                        🎉 Shortlisted
+
+                    </span>
+
+                {% elif job["status"] == "Rejected" %}
+
+                    <span class="status rejected">
+
+                        Rejected
+
+                    </span>
+
+                {% endif %}
 
             </p>
 

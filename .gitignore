@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+
+database.db
+
+static/uploads/photos/*
+static/uploads/resumes/*
+
+.env
+.vscode/

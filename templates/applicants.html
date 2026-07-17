@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Applicants</title>
+    <title>Applicants | Job House</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
 
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 </head>
 
 <body>
-    <div class="page-header">
+
+<div class="page-header">
 
     <a href="/dashboard" class="dashboard-btn">
 
@@ -30,11 +36,192 @@
 
         <h2>Applicants</h2>
 
-        <p>People who applied for your jobs.</p>
+        <p>Manage all job applications.</p>
 
     </div>
 
 </section>
 
+<div class="table-container">
+
+    {% if applicants %}
+
+    <table class="applicants-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Name</th>
+
+                <th>Email</th>
+
+                <th>Job Title</th>
+
+                <th>Applied On</th>
+
+                <th>Resume</th>
+
+                <th>Status</th>
+
+                <th>Update</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for applicant in applicants %}
+
+            <tr>
+
+                <td>{{ applicant.full_name }}</td>
+
+                <td>{{ applicant.email }}</td>
+
+                <td>{{ applicant.job_title }}</td>
+
+                <td>{{ applicant.applied_at }}</td>
+                <td>
+
+                    {% if applicant.resume %}
+
+                    <a href="{{ url_for('static', filename='uploads/resumes/' + applicant.resume) }}"
+                    target="_blank"
+                    class="apply-btn">
+
+                        <i class="bi bi-file-earmark-pdf"></i>
+
+                        Resume
+
+                    </a>
+
+                    {% else %}
+
+                    <span class="status rejected">
+
+                    No Resume
+
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if applicant.status == "Pending" %}
+
+                        <span class="status pending">
+
+                            Pending
+
+                        </span>
+
+                    {% elif applicant.status == "Shortlisted" %}
+
+                        <span class="status shortlisted">
+
+                            Shortlisted
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="status rejected">
+
+                            Rejected
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <form action="/update-status/{{ applicant.id }}"
+                          method="POST">
+
+                        <select name="status">
+
+                            <option value="Pending"
+
+                            {% if applicant.status=="Pending" %}
+
+                            selected
+
+                            {% endif %}>
+
+                                Pending
+
+                            </option>
+
+                            <option value="Shortlisted"
+
+                            {% if applicant.status=="Shortlisted" %}
+
+                            selected
+
+                            {% endif %}>
+
+                                Shortlisted
+
+                            </option>
+
+                            <option value="Rejected"
+
+                            {% if applicant.status=="Rejected" %}
+
+                            selected
+
+                            {% endif %}>
+
+                                Rejected
+
+                            </option>
+
+                        </select>
+
+                        <button type="submit">
+
+                            Update
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <div class="empty-box">
+
+        <i class="bi bi-people"></i>
+
+        <h2>No Applicants Yet</h2>
+
+        <p>
+
+            No one has applied for your jobs.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
 </body>
+
 </html>

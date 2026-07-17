@@ -37,26 +37,70 @@
         <h2>Available Jobs</h2>
 
         <p>Find your dream job from top companies.</p>
+        <form method="GET" style="margin:25px 0;">
 
-    </div>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
+            <div style="display:flex;gap:15px;flex-wrap:wrap;">
 
-        <div class="alert alert-{{ category }} alert-dismissible fade show">
+            <input
+            class="form-control"
+            type="text"
+            name="search"
+            placeholder="Search Job, Company, Skills"
+            value="{{ request.args.get('search','') }}">
 
-            {{ message }}
+            <input
+            class="form-control"
+            type="text"
+            name="location"
+            placeholder="Location"
+            value="{{ request.args.get('location','') }}">
 
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
+            <select
+            class="form-control"
+            name="job_type">
+
+            <option value="">All Job Types</option>
+
+            <option
+            {% if request.args.get("job_type")=="Full Time" %}
+            selected
+            {% endif %}
+            >
+            Full Time
+            </option>
+
+            <option
+            {% if request.args.get("job_type")=="Part Time" %}
+            selected
+            {% endif %}
+            >
+            Part Time
+            </option>
+
+            <option
+            {% if request.args.get("job_type")=="Internship" %}
+            selected
+            {% endif %}
+            >
+            Internship
+            </option>
+
+            </select>
+
+            <button
+            class="apply-btn"
+            type="submit">
+
+            Search
+
             </button>
 
-        </div>
+            </div>
 
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+            </form>
+
+    </div>
+   {% include "alert.html" %}
 
     <div class="job-list">
 
@@ -71,7 +115,91 @@
             <span class="salary">{{ job["salary"] }}</span>
 
         </div>
+            <div style="margin:10px 0;">
 
+                {% if job["match"] >= 80 %}
+
+                    <span style="background:#16a34a;color:white;padding:6px 12px;border-radius:20px;font-size:14px;font-weight:600;">
+                        🎯 {{ job["match"] }}% Match
+                    </span>
+
+                {% elif job["match"] >= 50 %}
+
+                    <span style="background:#f59e0b;color:white;padding:6px 12px;border-radius:20px;font-size:14px;font-weight:600;">
+                        🎯 {{ job["match"] }}% Match
+                    </span>
+
+                {% else %}
+
+                    <span style="background:#dc2626;color:white;padding:6px 12px;border-radius:20px;font-size:14px;font-weight:600;">
+                        🎯 {{ job["match"] }}% Match
+                    </span>
+
+        {% endif %}
+
+         </div>
+{% if job["matched"] %}
+
+<div style="margin:15px 0;">
+
+    <strong style="color:#22c55e;">
+        ✅ Matched Skills
+    </strong>
+
+    <div style="margin-top:8px;">
+
+        {% for skill in job["matched"] %}
+
+        <span style="
+            display:inline-block;
+            background:#16a34a;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            margin:4px;
+            font-size:13px;">
+            {{ skill }}
+        </span>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+{% if job["missing"] %}
+
+<div style="margin-bottom:15px;">
+
+    <strong style="color:#ef4444;">
+        ❌ Missing Skills
+    </strong>
+
+            <div style="margin-top:8px;">
+
+                {% for skill in job["missing"] %}
+
+                <span style="
+                    display:inline-block;
+                    background:#dc2626;
+                    color:white;
+                    padding:5px 10px;
+                    border-radius:20px;
+                    margin:4px;
+                    font-size:13px;">
+                    {{ skill }}
+                </span>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+                {% endif %}
         <div class="job-details">
 
             <span>
@@ -111,6 +239,28 @@
 
 {% endif %}
 
+{% if job["saved"] %}
+
+<span class="applied-badge"
+      style="background:#ef4444;margin-left:10px;">
+
+    ❤️ Saved
+
+</span>
+
+{% else %}
+
+<a href="/save-job/{{ job['id'] }}"
+   class="apply-btn"
+   style="background:#ef4444;margin-left:10px;">
+
+    <i class="bi bi-heart"></i>
+
+    Save Job
+
+</a>
+
+{% endif %}
     </div>
 
     {% else %}
@@ -120,6 +270,8 @@
     </h3>
 
     {% endfor %}
+
+
 
 </div>
 

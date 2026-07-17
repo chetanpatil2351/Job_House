@@ -1060,3 +1060,240 @@ text-align:center;
     font-weight:600;
     font-size:15px;
 }
+/* Global Alert */
+
+#flash-container{
+
+    position:fixed;
+
+    top:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    z-index:9999;
+
+    width:420px;
+
+}
+
+.flash-alert{
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.5s;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+
+}
+
+.flash-success{
+
+    background:#16a34a;
+
+}
+
+.flash-danger{
+
+    background:#dc2626;
+
+}
+
+.flash-warning{
+
+    background:#f59e0b;
+
+}
+
+/* ==========================
+   Applicants Table
+========================== */
+
+.table-container{
+
+    width:90%;
+    max-width:1300px;
+    margin:40px auto;
+
+    overflow-x:auto;
+
+}
+
+.applicants-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:#13233d;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+
+}
+
+.applicants-table thead{
+
+    background:#4F8CFF;
+
+}
+
+.applicants-table th{
+
+    padding:18px;
+
+    text-align:left;
+
+    color:white;
+
+    font-size:16px;
+
+}
+
+.applicants-table td{
+
+    padding:18px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+    color:#d7e3f8;
+
+}
+
+.applicants-table tr:hover{
+
+    background:#1b2d4d;
+
+}
+
+.applicants-table form{
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+
+}
+
+.applicants-table select{
+
+    background:#0f1f35;
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    border-radius:8px;
+
+    padding:10px;
+
+    outline:none;
+
+}
+
+.applicants-table button{
+
+    background:#4F8CFF;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 16px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.applicants-table button:hover{
+
+    background:#2563eb;
+
+}
+
+.status{
+
+    display:inline-block;
+
+    padding:7px 16px;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.pending{
+
+    background:#f59e0b;
+
+}
+
+.shortlisted{
+
+    background:#16a34a;
+
+}
+
+.rejected{
+
+    background:#dc2626;
+
+}
+
+.empty-box{
+
+    background:#13233d;
+
+    padding:60px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+}
+
+.empty-box i{
+
+    font-size:60px;
+
+    color:#4F8CFF;
+
+    margin-bottom:20px;
+
+}
+
+.empty-box h2{
+
+    margin-bottom:10px;
+
+}
+
+.empty-box p{
+
+    color:#9fb0ca;
+
+}

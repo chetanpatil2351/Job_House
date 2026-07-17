@@ -2,6 +2,7 @@ import sqlite3
 
 DATABASE_NAME = "database.db"
 
+
 def get_db():
     conn = sqlite3.connect(DATABASE_NAME)
     conn.row_factory = sqlite3.Row
@@ -12,12 +13,15 @@ def create_tables():
 
     conn = get_db()
 
+    # =========================
     # Users Table
+    # =========================
+
     conn.execute("""
     CREATE TABLE IF NOT EXISTS users(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        
+
         photo TEXT,
 
         full_name TEXT NOT NULL,
@@ -31,15 +35,20 @@ def create_tables():
         phone TEXT,
 
         city TEXT,
-        
+
         resume TEXT,
+
+        resume_skills TEXT,
 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
     """)
 
+    # =========================
     # Jobs Table
+    # =========================
+
     conn.execute("""
     CREATE TABLE IF NOT EXISTS jobs(
 
@@ -57,6 +66,8 @@ def create_tables():
 
         description TEXT NOT NULL,
 
+        skills TEXT,
+
         posted_by INTEGER,
 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -65,6 +76,11 @@ def create_tables():
 
     )
     """)
+
+    # =========================
+    # Applications Table
+    # =========================
+
     conn.execute("""
     CREATE TABLE IF NOT EXISTS applications(
 
@@ -74,11 +90,37 @@ def create_tables():
 
         job_id INTEGER NOT NULL,
 
+        status TEXT DEFAULT 'Pending',
+
         applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY(user_id) REFERENCES users(id),
 
         FOREIGN KEY(job_id) REFERENCES jobs(id)
+
+    )
+    """)
+
+    # =========================
+    # Saved Jobs Table
+    # =========================
+
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS saved_jobs(
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        user_id INTEGER NOT NULL,
+
+        job_id INTEGER NOT NULL,
+
+        saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY(user_id) REFERENCES users(id),
+
+        FOREIGN KEY(job_id) REFERENCES jobs(id),
+
+        UNIQUE(user_id, job_id)
 
     )
     """)
