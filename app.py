@@ -389,7 +389,7 @@ def login():
         conn = get_db()
 
         user = conn.execute(
-            "SELECT * FROM users WHERE email=?",
+            "SELECT * FROM users WHERE email=%s",
             (email,)
         ).fetchone()
 
@@ -436,7 +436,7 @@ def register():
         conn = get_db()
 
         user = conn.execute(
-            "SELECT * FROM users WHERE email=?",
+            "SELECT * FROM users WHERE email=%s",
             (email,)
         ).fetchone()
 
@@ -452,7 +452,7 @@ def register():
             """
             INSERT INTO users
             (full_name,email,password,role)
-            VALUES (?,?,?,?)
+            VALUES (%s,%s,%s,%s)
             """,
             (
                 full_name,
@@ -488,7 +488,7 @@ def dashboard():
                     """
                     SELECT *
                     FROM users
-                    WHERE id=?
+                    WHERE id=%s
                     """,
                     (session["user_id"],)
                 ).fetchone()
@@ -525,46 +525,46 @@ def dashboard():
 
             jobs_posted = conn.execute(
                 """
-                SELECT COUNT(*)
+                SELECT COUNT(*) AS count
                 FROM jobs
-                WHERE posted_by=?
+                WHERE posted_by=%s
                 """,
                 (session["user_id"],)
-            ).fetchone()[0]
+            ).fetchone()["count"]
 
             applicants = conn.execute(
                 """
-                SELECT COUNT(*)
+                SELECT COUNT(*) AS count
 
                 FROM applications
 
                 JOIN jobs
                 ON applications.job_id = jobs.id
 
-                WHERE jobs.posted_by=?
+                WHERE jobs.posted_by=%s
                 """,
                 (session["user_id"],)
-            ).fetchone()[0]
+            ).fetchone()["count"]
 
     else:
 
             jobs_applied = conn.execute(
                 """
-                SELECT COUNT(*)
+                SELECT COUNT(*) AS count
                 FROM applications
-                WHERE user_id=?
+                WHERE user_id=%s
                 """,
                 (session["user_id"],)
-            ).fetchone()[0]
+            ).fetchone()["count"]
             
             saved_jobs = conn.execute(
                 """
-                SELECT COUNT(*)
+                SELECT COUNT(*) AS count
                 FROM saved_jobs
-                WHERE user_id=?
+                WHERE user_id=%s
                 """,
                 (session["user_id"],)
-            ).fetchone()[0]
+            ).fetchone()["count"]
 
     conn.close()
         
@@ -615,7 +615,7 @@ def post_job():
                     skills,
                     posted_by
                 )
-                VALUES(?,?,?,?,?,?,?,?)
+                VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
                 (
                     company_name,
@@ -658,7 +658,7 @@ def find_jobs():
         """
         SELECT resume_skills
         FROM users
-        WHERE id=?
+        WHERE id=%s
         """,
         (session["user_id"],)
     ).fetchone()
@@ -680,22 +680,22 @@ def find_jobs():
 
         LEFT JOIN applications
         ON jobs.id = applications.job_id
-        AND applications.user_id = ?
+        AND applications.user_id = %s
 
         LEFT JOIN saved_jobs
         ON jobs.id = saved_jobs.job_id
-        AND saved_jobs.user_id = ?
+        AND saved_jobs.user_id = %s
 
         WHERE
         (
-            jobs.job_title LIKE ?
-            OR jobs.company_name LIKE ?
-            OR jobs.skills LIKE ?
+            jobs.job_title LIKE %s
+            OR jobs.company_name LIKE %s
+            OR jobs.skills LIKE %s
         )
 
-        AND jobs.location LIKE ?
+        AND jobs.location LIKE %s
 
-        AND jobs.job_type LIKE ?
+        AND jobs.job_type LIKE %s
 
         ORDER BY jobs.created_at DESC
         """,
@@ -783,7 +783,7 @@ def apply_job(job_id):
         """
         SELECT *
         FROM applications
-        WHERE user_id=? AND job_id=?
+        WHERE user_id=%s AND job_id=%s
         """,
         (
             session["user_id"],
@@ -802,7 +802,7 @@ def apply_job(job_id):
     conn.execute(
         """
         INSERT INTO applications(user_id,job_id)
-        VALUES(?,?)
+        VALUES(%s,%s)
         """,
         (
             session["user_id"],
@@ -831,16 +831,16 @@ def save_job(job_id):
     conn = get_db()
 
     conn.execute(
-        """
-        INSERT OR IGNORE INTO saved_jobs
-        (user_id, job_id)
-        VALUES(?,?)
-        """,
-        (
-            session["user_id"],
-            job_id
-        )
+    """
+    INSERT INTO saved_jobs (user_id, job_id)
+    VALUES (%s, %s)
+    ON CONFLICT (user_id, job_id) DO NOTHING
+    """,
+    (
+        session["user_id"],
+        job_id
     )
+)
 
     conn.commit()
     conn.close()
@@ -872,7 +872,7 @@ def saved_jobs():
         JOIN jobs
         ON saved_jobs.job_id = jobs.id
 
-        WHERE saved_jobs.user_id=?
+        WHERE saved_jobs.user_id=%s
 
         ORDER BY saved_jobs.id DESC
         """,
@@ -897,7 +897,7 @@ def remove_saved_job(job_id):
     conn.execute(
         """
         DELETE FROM saved_jobs
-        WHERE user_id=? AND job_id=?
+        WHERE user_id=%s AND job_id=%s
         """,
         (
             session["user_id"],
@@ -951,7 +951,7 @@ def applicants():
         JOIN jobs
         ON applications.job_id = jobs.id
 
-        WHERE jobs.posted_by=?
+        WHERE jobs.posted_by=%s
 
         ORDER BY applications.applied_at DESC
 
@@ -993,7 +993,7 @@ def applied_jobs():
         JOIN jobs
         ON applications.job_id = jobs.id
 
-        WHERE applications.user_id = ?
+        WHERE applications.user_id = %s
 
         ORDER BY applications.applied_at DESC
 
@@ -1021,7 +1021,7 @@ def profile():
         """
         SELECT *
         FROM users
-        WHERE id=?
+        WHERE id=%s
         """,
         (session["user_id"],)
     ).fetchone()
@@ -1091,12 +1091,12 @@ def profile():
 
             SET
 
-            phone=?,
-            city=?,
-            resume=?,
-            photo=?
+            phone=%s,
+            city=%s,
+            resume=%s,
+            photo=%s
 
-            WHERE id=?
+            WHERE id=%s
             """,
             (
                 phone,
@@ -1115,7 +1115,7 @@ def profile():
             """
             SELECT *
             FROM users
-            WHERE id=?
+            WHERE id=%s
             """,
             (session["user_id"],)
         ).fetchone()
@@ -1140,8 +1140,8 @@ def profile():
         conn.execute(
             """
             UPDATE users
-            SET resume_skills=?
-            WHERE id=?
+            SET resume_skills=%s
+            WHERE id=%s
             """,
             (
                 resume_skills,
@@ -1178,7 +1178,7 @@ def my_jobs():
         """
         SELECT *
         FROM jobs
-        WHERE posted_by=?
+        WHERE posted_by=%s
         ORDER BY created_at DESC
         """,
         (session["user_id"],)
@@ -1208,7 +1208,7 @@ def edit_job(job_id):
         """
         SELECT *
         FROM jobs
-        WHERE id=? AND posted_by=?
+        WHERE id=%s AND posted_by=%s
         """,
         (
             job_id,
@@ -1238,14 +1238,14 @@ def edit_job(job_id):
             """
             UPDATE jobs
             SET
-            company_name=?,
-            job_title=?,
-            location=?,
-            job_type=?,
-            salary=?,
-            skills=?,
-            description=?
-            WHERE id=?
+            company_name=%s,
+            job_title=%s,
+            location=%s,
+            job_type=%s,
+            salary=%s,
+            skills=%s,
+            description=%s
+            WHERE id=%s
             """,
            (
                 company_name,
@@ -1290,7 +1290,7 @@ def delete_job(job_id):
     conn.execute(
         """
         DELETE FROM applications
-        WHERE job_id=?
+        WHERE job_id=%s
         """,
         (job_id,)
     )
@@ -1298,7 +1298,7 @@ def delete_job(job_id):
     conn.execute(
         """
         DELETE FROM saved_jobs
-        WHERE job_id=?
+        WHERE job_id=%s
         """,
         (job_id,)
     )
@@ -1306,7 +1306,7 @@ def delete_job(job_id):
     conn.execute(
         """
         DELETE FROM jobs
-        WHERE id=? AND posted_by=?
+        WHERE id=%s AND posted_by=%s
         """,
         (
             job_id,
@@ -1338,9 +1338,9 @@ def update_status(application_id):
     conn.execute(
     """
     UPDATE applications
-    SET status=?
+    SET status=%s
 
-    WHERE id=?
+    WHERE id=%s
 
     AND job_id IN (
 
@@ -1348,7 +1348,7 @@ def update_status(application_id):
 
         FROM jobs
 
-        WHERE posted_by=?
+        WHERE posted_by=%s
 
     )
     """,

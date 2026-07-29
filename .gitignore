@@ -2,9 +2,7 @@ __pycache__/
 *.pyc
 
 database.db
-
-static/uploads/photos/*
-static/uploads/resumes/*
+static/uploads/
 
 .env
 .vscode/
